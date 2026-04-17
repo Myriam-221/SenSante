@@ -1,12 +1,12 @@
 interface PatientCardProps {
   nom: string;
-  role: string;
-  groupe: number;
+  region: string;
+  age: number;
   sexe: "M" | "F";
 }
 
 export default function PatientCard({
-  nom, role, groupe, sexe
+  nom, region, age, sexe
 }: PatientCardProps) {
   const badgeColor = sexe === "F"
     ? "bg-pink-100 text-pink-700"
@@ -23,10 +23,10 @@ export default function PatientCard({
         </span>
       </div>
       <p className="text-gray-600 mt-1">
-        Rôle : {role}
+        Région : {region}
       </p>
       <p className="text-gray-500 text-sm mt-1">
-        Groupe : {groupe}
+        {age} ans
       </p>
     </div>
   );
