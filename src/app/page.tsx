@@ -12,7 +12,7 @@ export default function Home() {
       <main className="p-8">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">Derniers patients</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <PatientCard nom="Fatou Ida Seck" region="Dakar" age={21} sexe="F" />
+          <PatientCard nom="Fatou Ida Seck" region="Oracle" age={3} sexe="F" />
           <PatientCard nom="Ibrahima Ba" region="Thiès" age={45} sexe="M" />
           <PatientCard nom="Awa Diallo" region="Saint-Louis" age={28} sexe="F" />
         </div>
