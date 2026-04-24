@@ -7,7 +7,7 @@ export default function PatientsPage() {
     { nom: "Awa Diallo", region: "Saint-Louis", age: 28, sexe: "F" as const },
     { nom: "Cheikh Fall", region: "Ziguinchor", age: 52, sexe: "M" as const },
   ];
-
+  // commentaire inutile
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-800 mb-6">
