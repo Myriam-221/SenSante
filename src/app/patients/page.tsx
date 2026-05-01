@@ -42,9 +42,7 @@ export default function PatientsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        Patients
-      </h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Patients</h1>
       <PatientForm onSuccess={chargerPatients} />
       <h2 className="text-xl font-semibold text-gray-700 mt-8 mb-4">
         Liste des patients ({patients.length})
@@ -55,7 +53,7 @@ export default function PatientsPage() {
         <p className="text-gray-500">Aucun patient enregistré.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {patients.map((p) => (
+          {patients.map(p => (
             <PatientCard
               key={p.id}
               nom={`${p.prenom} ${p.nom}`}
