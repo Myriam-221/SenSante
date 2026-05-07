@@ -44,14 +44,14 @@ export default function LoginPage() {
             type="email"
             placeholder="Email"
             required
-            className="w-full p-3 border rounded-lg"
+            className="w-full p-3 border text-gray-900 rounded-lg"
           />
           <input
             name="password"
             type="password"
             placeholder="Mot de passe"
             required
-            className="w-full p-3 border rounded-lg"
+            className="w-full p-3 border text-gray-900 rounded-lg"
           />
           <button
             type="submit"
