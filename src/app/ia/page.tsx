@@ -1,4 +1,5 @@
-import AlerteIA from "@/components/AlerteIA";
+"use client";
+import DiagnosticIA from "@/components/DiagnosticIA";
 
 export default function IAPage() {
   return (
@@ -9,10 +10,11 @@ export default function IAPage() {
       <p className="text-gray-600 mb-6">
         Saisissez les symptômes du patient pour obtenir un pré-diagnostic.
       </p>
-      <AlerteIA
-        diagnostic="Suspicion de paludisme. Orientation vers un centre de santé."
-        confiance={78}
-        niveau="urgent"
+      <DiagnosticIA
+        consultationId={1}
+        diagnosticExistant={null}
+        confianceExistante={null}
+        onDiagnostic={() => {}}
       />
     </div>
   );
