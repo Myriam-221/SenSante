@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import ConsultationForm from "@/components/ConsultationsForm";
+import DiagnosticIA from "@/components/DiagnosticIA";
 
 interface Consultation {
   id: number;
@@ -10,18 +12,32 @@ interface Consultation {
   confiance: number | null;
   statut: string;
   notes: string | null;
-  patient: { nom: string; prenom: string; region: string };
+  patient: {
+    nom: string;
+    prenom: string;
+    region: string;
+  };
 }
 
 export default function ConsultationsPage() {
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   async function charger() {
-    const res = await fetch("/api/consultations");
-    const data = await res.json();
-    setConsultations(data);
-    setLoading(false);
+    try {
+      const res = await fetch("/api/consultations");
+      if (res.status === 401) {
+        router.push("/login");
+        return;
+      }
+      const data = await res.json();
+      setConsultations(Array.isArray(data) ? data : []);
+    } catch (e) {
+      setConsultations([]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -41,7 +57,7 @@ export default function ConsultationsPage() {
         <p className="text-gray-500">Aucune consultation enregistrée.</p>
       ) : (
         <div className="space-y-4">
-          {consultations.map(c => (
+          {consultations.map((c) => (
             <div
               key={c.id}
               className="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-400"
@@ -57,12 +73,16 @@ export default function ConsultationsPage() {
                   </p>
                 </div>
                 <span
-                  className={`text-xs px-3 py-1 rounded-full
-                  ${c.statut === "termine" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
+                  className={`text-xs px-3 py-1 rounded-full ${
+                    c.statut === "termine"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                  }`}
                 >
                   {c.statut === "termine" ? "Terminé" : "En attente"}
                 </span>
               </div>
+
               <div className="flex flex-wrap gap-2 mt-3">
                 {(c.symptomes as string[]).map((s, i) => (
                   <span
@@ -73,23 +93,17 @@ export default function ConsultationsPage() {
                   </span>
                 ))}
               </div>
+
               {c.notes && (
                 <p className="text-sm text-gray-600 mt-3 italic">{c.notes}</p>
               )}
-              {c.diagnosticIa ? (
-                <div className="mt-3 p-3 bg-red-50 rounded-lg">
-                  <p className="text-sm font-bold text-red-700">
-                    Diagnostic IA : {c.diagnosticIa}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Confiance : {c.confiance}%
-                  </p>
-                </div>
-              ) : (
-                <p className="text-xs text-gray-400 mt-3 italic">
-                  Diagnostic IA en attente (Lab IA — v0.5)
-                </p>
-              )}
+
+              <DiagnosticIA
+                consultationId={c.id}
+                diagnosticExistant={c.diagnosticIa}
+                confianceExistante={c.confiance}
+                onDiagnostic={charger}
+              />
             </div>
           ))}
         </div>
