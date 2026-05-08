@@ -4,14 +4,11 @@ import AlerteIA from "@/components/AlerteIA";
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
-<<<<<<< HEAD
-=======
       <header className="bg-teal-700 text-white p-4 flex items-center justify-between">
         <h1 className="text-xl font-bold">SénSanté</h1>
         <span className="text-sm text-teal-200">Assistant de santé communautaire</span>
       </header>
 
->>>>>>> 5d392ec77597aaba065e288b1414539fa4d5884a
       <main className="p-8">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">Derniers patients</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
