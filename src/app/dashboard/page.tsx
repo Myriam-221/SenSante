@@ -1,80 +1,170 @@
-import PatientCard from "@/components/PatientCard";
-import ConsultationCard from "@/components/ConsultationCard";
-import AlerteIA from "@/components/AlerteIA";
+"use client";
+
+import { useEffect, useState } from "react";
 import StatCard from "@/components/StatCard";
-import LoginButton from "@/components/LoginButton";
+import {
+  BarChart, Bar, XAxis, YAxis,
+  CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend,
+} from "recharts";
 
+interface Stats {
+  kpi: {
+    totalPatients: number;
+    totalConsultations: number;
+    consultationsTerminees: number;
+    alertesUrgentes: number;
+  };
+  parRegion: { region: string; total: number }[];
+  parMois: { mois: string; total: number }[];
+  dernieresAlertes: {
+    id: number;
+    patient: string;
+    region: string;
+    diagnostic: string | null;
+    confiance: number | null;
+    date: string;
+  }[];
+}
 
-export default function Home() {
+const COULEURS_PIE = [
+  "#0088FE", "#00C49F", "#FFBB28",
+  "#FF8042", "#8884D8", "#82CA9D",
+];
+
+export default function DashboardPage() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/stats")
+      .then((res) => res.json())
+      .then((data) => {
+        setStats(data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <p className="p-8 text-gray-500">Chargement du dashboard...</p>;
+  }
+
+  if (!stats) return null;
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-800">
-            Tableau de bord
-          </h2>
-          <LoginButton />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <StatCard
-            titre="Patients"
-            valeur={127}
-            unite="enregistrés"
-            couleur="border-teal-500"
-          />
-          <StatCard
-            titre="Consultations"
-            valeur={43}
-            unite="ce mois"
-            couleur="border-orange-500"
-          />
-          <StatCard
-            titre="Alertes IA"
-            valeur={8}
-            unite="urgentes"
-            couleur="border-red-500"
-          />
-        </div>
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">
-          Derniers patients
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <PatientCard
-            nom="Aminata Sow"
-            region="Dakar"
-            age={34}
-            sexe="F"
-          />
-          <PatientCard
-            nom="Ibrahima Ba"
-            region="Thiès"
-            age={45}
-            sexe="M"
-          />
-          <PatientCard
-            nom="Awa Diallo"
-            region="Saint-Louis"
-            age={28}
-            sexe="F"
-          />
-        </div>
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">
-          Dernière consultation
-        </h2>
-        <ConsultationCard
-          patient="Aminata Sow"
-          date="18 mars 2025"
-          symptomes="Fièvre, toux, fatigue"
-          statut="termine"
+    <div className="p-8">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        Tableau de bord
+      </h1>
+
+      {/* ---- ZONE 1 : 4 cartes KPI ---- */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <StatCard
+          titre="Patients"
+          valeur={stats.kpi.totalPatients}
+          unite="enregistrés"
+          couleur="border-teal-500"
         />
-        <div className="mt-6">
-          <AlerteIA
-            diagnostic="Suspicion de paludisme. Orientation recommandée."
-            confiance={78}
-            niveau="urgent"
-          />
+        <StatCard
+          titre="Consultations"
+          valeur={stats.kpi.totalConsultations}
+          unite="au total"
+          couleur="border-orange-500"
+        />
+        <StatCard
+          titre="Diagnostics IA"
+          valeur={stats.kpi.consultationsTerminees}
+          unite="terminés"
+          couleur="border-purple-500"
+        />
+        <StatCard
+          titre="Alertes"
+          valeur={stats.kpi.alertesUrgentes}
+          unite="urgentes"
+          couleur="border-red-500"
+        />
+      </div>
+
+      {/* ---- ZONE 2 + 4 : Graphiques côte à côte ---- */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+        {/* Graphique en barres : consultations par mois */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">
+            Consultations par mois
+          </h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart data={stats.parMois}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="mois" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="total" fill="#E65100" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
-      </main>
+
+        {/* Graphique circulaire : patients par région */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">
+            Patients par région
+          </h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <PieChart>
+              <Pie
+                data={stats.parRegion}
+                dataKey="total"
+                nameKey="region"
+                cx="50%"
+                cy="50%"
+                outerRadius={90}
+                label
+              >
+                {stats.parRegion.map((_, i) => (
+                  <Cell key={i} fill={COULEURS_PIE[i % COULEURS_PIE.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+      </div>
+
+      {/* ---- ZONE 3 : Derniers diagnostics IA ---- */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Derniers diagnostics IA
+        </h2>
+        <div className="space-y-3">
+          {stats.dernieresAlertes.map((a) => (
+            <div
+              key={a.id}
+              className="flex items-center justify-between p-3 rounded-lg bg-gray-50"
+            >
+              <div>
+                <p className="font-semibold text-gray-800">{a.patient}</p>
+                <p className="text-sm text-gray-500">
+                  {a.region} —{" "}
+                  {new Date(a.date).toLocaleDateString("fr-FR")}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-700">
+                  {a.diagnostic
+                    ? a.diagnostic.substring(0, 50) + "..."
+                    : "—"}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Confiance : {a.confiance}%
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 }
