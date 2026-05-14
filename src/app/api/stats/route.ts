@@ -42,7 +42,7 @@ export async function GET() {
   });
 
   // Grouper par mois côté JS
-  const parMois: Record = {};
+const parMois: Record<string, any> = {};
   const moisNoms = [
     "Jan", "Fév", "Mar", "Avr", "Mai",
     "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc",
