@@ -34,3 +34,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## 🚀 Lancer avec Docker
+
+### Prérequis
+- Docker Desktop installé et lancé.
+
+### Démarrage rapide
+1. **Cloner le projet** : 
+   `git clone <url-du-repo>`
+2. **Configurer l'environnement** :
+   [cite_start]`cp .env.example .env` (Pensez à remplir vos clés API comme `GROQ_API_KEY`)[cite: 830].
+3. **Lancer les conteneurs** :
+   [cite_start]`docker compose up --build`[cite: 832].
+
+### Initialisation de la base de données
+Lors du premier lancement, créez les tables avec :
+[cite_start]`docker compose exec app npx prisma db push` [cite: 837]
+
+### Accès
+[cite_start]L'application est disponible sur : **http://localhost:3000**
